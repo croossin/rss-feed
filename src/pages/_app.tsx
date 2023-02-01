@@ -1,12 +1,20 @@
 import type { AppProps } from "next/app";
 import "@/styles/globals.css";
 import "focus-visible";
-import { Layout } from "@/components/common/Layout";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { useState } from "react";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 export default function App({ Component, pageProps }: AppProps) {
+  // Create a new supabase browser client on every first render.
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
   return (
-    <Layout>
+    <SessionContextProvider
+      supabaseClient={supabaseClient}
+      initialSession={pageProps.initialSession}
+    >
       <Component {...pageProps} />
-    </Layout>
+    </SessionContextProvider>
   );
 }
