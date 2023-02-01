@@ -4,7 +4,8 @@ import Link from "next/link";
 import clsx from "clsx";
 
 import posterImage from "@/images/poster.png";
-import { User, useUser } from "@supabase/auth-helpers-react";
+import { User, useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 function randomBetween(min: number, max: number, seed: number = 1) {
   return () => {
@@ -142,6 +143,9 @@ interface Props {
 }
 
 export function Layout({ user, children }: Props) {
+  const router = useRouter();
+  const supa = useSupabaseClient();
+
   return (
     <>
       <header className="bg-slate-50 lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-112 lg:items-start lg:overflow-y-auto xl:w-120">
@@ -171,6 +175,15 @@ export function Layout({ user, children }: Props) {
             />
             <div className="absolute inset-0 rounded-lg ring-1 ring-inset ring-black/10 sm:rounded-xl lg:rounded-2xl" />
           </Link>
+          <div
+            className="mt-4 text-center hover:cursor-pointer"
+            onClick={async () => {
+              await supa.auth.signOut();
+              router.push("/auth/login");
+            }}
+          >
+            Sign out
+          </div>
           <div className="mt-10 text-center lg:mt-12 lg:text-left">
             <p className="text-xl font-bold text-slate-900">
               <Link href="/">{user?.user_metadata.name}</Link>
